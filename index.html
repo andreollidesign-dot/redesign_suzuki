@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suzuki Press – prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="proto"><span class="long"><b>Prototipo di redesign di Greta Andreolli per Lulop</b> · contenuti reali di press.suzuki.it al 20/11/2026 · login e download sono simulati</span><span class="short"><b>Prototipo di Greta Andreolli</b> · Lulop</span></div>
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="#home" aria-label="Suzuki Press, home">
+      <img src="https://media.lulop.com/media/getbanner/ec9954a1324b6c.png" alt="Suzuki" onerror="this.outerHTML='<span class=wm>SUZUKI</span>'">
+      <span class="press">Press</span>
+    </a>
+    <nav class="main" id="nav"></nav>
+    <div class="tools">
+      <button class="ib" id="srchBtn" aria-label="Cerca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" id="loginBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span class="lbl" id="loginLbl">Area giornalisti</span></button>
+      <button class="ib primary" id="cartBtn" aria-label="La mia selezione"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span class="sel-l">La mia selezione</span><span class="sel-s">Selezione</span><span class="badge" id="cartN" hidden>0</span></button>
+      <button class="ib burger" id="burger" aria-label="Menu" aria-controls="mnav" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<main id="app"></main>
+<section class="contact">
+  <div class="wrap">
+    <div><h2>Ufficio stampa Suzuki Italia</h2><p>Per interviste, prove su strada e materiali non presenti sul sito.</p></div>
+    <div class="cbox">
+      <div><span>Telefono</span>011 9213711</div>
+      <div><span>Email</span>press@suzuki.it</div>
+      <div><button class="btn w" data-act="newsletter">Ricevi i comunicati via email</button></div>
+    </div>
+  </div>
+</section>
+<footer><div class="wrap"><span>Suzuki Italia S.p.A. · <a href="https://www.suzuki.it">suzuki.it</a> · <a href="https://www.globalsuzuki.com">globalsuzuki.com</a></span><span>Privacy · Cookie · Powered by Lulop</span></div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="La mia selezione">
+  <div class="dh"><h2>La mia selezione</h2><button class="x" data-close aria-label="Chiudi">×</button></div>
+  <div class="db" id="cartList"></div>
+  <div class="df" id="cartFoot"></div>
+</aside>
+<nav class="mnav" id="mnav" aria-label="Menu mobile"></nav>
+<div class="modal" id="modal"><div class="mcard" id="mcard"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+{
+ "tree": {
+  "Auto": {
+   "Gamma": [
+    "Across Plug-In",
+    "Baleno",
+    "e VITARA",
+    "Celerio",
+    "Ignis",
+    "Jimny",
+    "S-Cross Hybrid",
+    "Swift Hybrid",
+    "Swift Sport",
+    "SWACE",
+    "Vitara"
+   ]
+  },
+  "Moto": {
+   "Supersport": [
+    "GSX-10R",
+    "GSX-R1000R",
+    "GSX-8R",
+    "GSX-R125",
+    "Hayabusa"
+   ],
+   "Strada": [
+    "SV-7S",
+    "GSX-8S",
+    "GSX-8T",
+    "GSX-8TT",
+    "GSX-S1000",
+    "GSX-S1000GT",
+    "GSX-S125",
+    "Katana",
+    "Katana MY22",
+    "SV650"
+   ],
+   "Adventure e crossover": [
+    "V-Strom 800DE",
+    "V-Strom 800SE",
+    "V-Strom 1050DE",
+    "V-Strom 1050DE MY23",
+    "V-Strom 1050SE",
+    "V-Strom 650",
+    "GSX-S1000GX",
+    "SV-7GX"
+   ],
+   "Off-road": [
+    "DR-Z4S",
+    "DR-Z4SM",
+    "RM-Z250"
+   ],
+   "Scooter": [
+    "Address 125",
+    "Burgman 400",
+    "Burgman 400 MY22"
+   ]
+  },
+  "Marine": {
+   "Fuoribordo": [
+    "Motori senza patente nautica",
+    "Motori con patente nautica",
+    "Gamma Package"
+   ]
+  }
+ },
+ "facts": {
+  "GSX-10R": [
+   "Quattro cilindri in linea 999 cm³",
+   "152 CV",
+   "S.I.R.S. con 15 aiuti alla guida",
+   "Slide Control"
+  ],
+  "SV-7S": [
+   "Bicilindrico a V 645 cm³",
+   "73 CV",
+   "Ride-by-wire",
+   "Quick shifter bidirezionale"
+  ]
+ },
+ "status": {
+  "Across Plug-In": "current",
+  "Baleno": "current",
+  "e VITARA": "current",
+  "Celerio": "current",
+  "Ignis": "current",
+  "Jimny": "current",
+  "S-Cross Hybrid": "current",
+  "Swift Hybrid": "current",
+  "Swift Sport": "current",
+  "SWACE": "current",
+  "Vitara": "current",
+  "GSX-10R": "current",
+  "GSX-R1000R": "current",
+  "GSX-8R": "current",
+  "GSX-R125": "current",
+  "Hayabusa": "current",
+  "SV-7S": "current",
+  "GSX-8S": "current",
+  "GSX-8T": "current",
+  "GSX-8TT": "current",
+  "GSX-S1000": "current",
+  "GSX-S1000GT": "current",
+  "GSX-S125": "current",
+  "Katana": "current",
+  "Katana MY22": "archive",
+  "SV650": "current",
+  "V-Strom 800DE": "current",
+  "V-Strom 800SE": "current",
+  "V-Strom 1050DE": "current",
+  "V-Strom 1050DE MY23": "archive",
+  "V-Strom 1050SE": "current",
+  "V-Strom 650": "current",
+  "GSX-S1000GX": "current",
+  "SV-7GX": "current",
+  "DR-Z4S": "current",
+  "DR-Z4SM": "current",
+  "RM-Z250": "current",
+  "Address 125": "current",
+  "Burgman 400": "current",
+  "Burgman 400 MY22": "archive",
+  "Motori senza patente nautica": "current",
+  "Motori con patente nautica": "current",
+  "Gamma Package": "current"
+ },
+ "novita": {
+  "Moto": [
+   "GSX-10R",
+   "SV-7S"
+  ]
+ },
+ "todo": {
+  "note": "TODO da confermare con Suzuki. \"archive\" = versioni MY precedenti. I modelli senza comunicati negli ultimi 24 mesi andrebbero spostati in archivio, ma sul sito attuale le pagine modello sono vuote e non permettono di verificarlo: qui sotto quelli senza contenuti negli ultimi 20 comunicati.",
+  "daVerificare": [
+   "Across Plug-In",
+   "Baleno",
+   "e VITARA",
+   "Celerio",
+   "Ignis",
+   "Jimny",
+   "S-Cross Hybrid",
+   "Swift Sport",
+   "SWACE",
+   "Vitara",
+   "GSX-R125",
+   "GSX-8S",
+   "GSX-S1000",
+   "GSX-S125",
+   "Katana",
+   "SV650",
+   "V-Strom 800DE",
+   "V-Strom 800SE",
+   "V-Strom 650",
+   "RM-Z250",
+   "Address 125",
+   "Motori senza patente nautica",
+   "Motori con patente nautica",
+   "Gamma Package"
+  ]
+ }
+}
