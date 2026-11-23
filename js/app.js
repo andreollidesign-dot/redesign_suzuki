@@ -58,10 +58,10 @@ const allModels = () => Object.values(MODELS).flatMap(f => Object.values(f).flat
 const areaOf = m => Object.entries(MODELS).find(([, f]) => Object.values(f).flat().includes(m))?.[0] || 'Moto';
 const famOf = m => { for (const f of Object.values(MODELS)) for (const [k, ms] of Object.entries(f)) if (ms.includes(m)) return k; return ''; };
 
-const st = { q: '', area: 'Tutte', type: 'Tutti', lang: 'Tutte', per: 'Tutto', cart: [], logged: false, album: null, shown: 24, tab: 'foto', cur: null, mf: 'Tutti' };
+const st = { q: '', area: 'Tutte', type: 'Tutti', lang: 'Tutte', per: 'Tutto', logged: false, album: null, shown: 24, tab: 'foto', cur: null, mf: 'Tutti' };
 /* ricerca, filtri, carrello e login restano salvati tra un ricarico e l'altro; ?reset=1 riparte da zero */
 const STORE = 'suzukiPressDemo';
-const SAVED = ['q', 'area', 'type', 'lang', 'per', 'cart', 'logged'];
+const SAVED = ['q', 'area', 'type', 'lang', 'per', 'logged'];
 const params = new URLSearchParams(location.search);
 if (params.has('reset')) {
   try { localStorage.removeItem(STORE); } catch (_) { /* storage non disponibile */ }
@@ -275,9 +275,8 @@ function viewer() {
   const a = ALB.find(x => x.id === st.album); if (!a) return '';
   const area = postById(a.post)?.area || 'Moto';
   const all = photoNums(a), n = Math.min(st.shown, all.length), items = all.slice(0, n);
-  const allIn = all.every(i => inCart(pkey(a.post, i)));
-  return `<div class="viewer" id="viewer"><div class="vh"><div><h3>${esc(albumName(a))}</h3><small>${a.count} foto · tocca una foto per selezionarla</small></div><div class="cta"><button class="btn g" data-act="closealbum">Chiudi album</button><button class="btn b" data-act="addalbum">${ico.dl}${allIn ? 'Album nella selezione' : 'Aggiungi tutto l\'album'}</button></div></div>
-  <div class="thumbs">${items.map((i, k) => { const s = inCart(pkey(a.post, i)); return `<button class="th ${s ? 'sel' : ''}" data-ph="${i}" data-pp="${a.post}" aria-pressed="${s}" aria-label="Foto ${k + 1}">${ph(IMG(a.post, i, '265,175'), albumName(a) + ' ' + (k + 1), col(area))}<span class="ck">${s ? '✓' : '+'}</span></button>`; }).join('')}</div>
+  return `<div class="viewer" id="viewer"><div class="vh"><div><h3>${esc(albumName(a))}</h3><small>${a.count} foto · tocca una foto per scaricarla</small></div><div class="cta"><button class="btn g" data-act="closealbum">Chiudi album</button><button class="btn b" data-act="dlalbum">${ico.dl}Scarica l'album (${a.count} foto)</button></div></div>
+  <div class="thumbs">${items.map((i, k) => `<button class="th" data-ph="${i}" data-pp="${a.post}" aria-label="Scarica ${esc(albumName(a))} · ${k + 1}">${ph(IMG(a.post, i, '265,175'), albumName(a) + ' ' + (k + 1), col(area))}<span class="ck">${ico.dl}</span></button>`).join('')}</div>
   ${n < all.length ? `<div class="more"><button class="btn g" data-act="more">Mostra altre ${Math.min(24, all.length - n)} di ${all.length - n}</button></div>` : ''}</div>`;
 }
 /* scope: {post:id} oppure {model:name} */
@@ -300,7 +299,7 @@ function kitTabs(scope) {
     const inner = `<div style="position:relative">${ph(thumb, v.title, col(area))}<span class="play"><i></i></span></div><b style="display:block;margin-top:8px">${esc(v.title)}</b>${v.info ? `<small style="color:var(--mute)">${esc(v.info)}</small>` : ''}`;
     return href ? `<a href="${href}" target="_blank" rel="noopener" style="text-decoration:none">${inner}</a>` : `<button class="vbtn" data-act="video" style="all:unset;cursor:pointer">${inner}</button>`;
   }).join('')}${!byModel && nVid > vids.length ? '<div class="empty" style="padding:20px">Un video del comunicato non è stato catalogato in questo prototipo.</div>' : ''}</div>`;
-  if (st.tab === 'doc') body = `<div class="docs">${docs.map(d => { const i = DOCS.indexOf(d); return `<div class="doc"><span class="ext">${esc(d.ext)}</span><div class="dn"><b>${esc(d.title)}</b><small>${esc(d.ext)} · ${esc(d.size)}</small></div><button class="ib" data-doc="${i}">${inCart('d' + i) ? '✓ Aggiunto' : '+ Aggiungi'}</button></div>`; }).join('')}</div>${(p?.dupNote) ? `<p style="color:var(--mute);font-size:13.5px">${esc(p.dupNote)}</p>` : ''}`;
+  if (st.tab === 'doc') body = `<div class="docs">${docs.map(d => { const i = DOCS.indexOf(d); return `<div class="doc"><span class="ext">${esc(d.ext)}</span><div class="dn"><b>${esc(d.title)}</b><small>${esc(d.ext)} · ${esc(d.size)}</small></div><button class="ib" data-doc="${i}">${ico.dl}Scarica</button></div>`; }).join('')}</div>${(p?.dupNote) ? `<p style="color:var(--mute);font-size:13.5px">${esc(p.dupNote)}</p>` : ''}`;
   return `<div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button class="tab" role="tab" data-tab="${k}" aria-selected="${st.tab === k}">${l}</button>`).join('')}</div>${body}`;
 }
 
@@ -379,31 +378,27 @@ function media() {
   <div class="chips" style="margin:0 0 20px"><div class="cg"><span>Modello</span>${['Tutti', ...ms, ...(others ? ['Eventi e altro'] : [])].map(o => `<button class="chip" data-mf="${o}" aria-pressed="${f === o}">${o}</button>`).join('')}</div></div>
   <div class="albums">${alb.map(albumCard).join('')}</div>${alb.some(a => a.id === st.album) ? viewer() : ''}
   <h2 style="font-size:24px;margin:40px 0 14px">Foto di copertina dei comunicati</h2>
-  <div class="thumbs">${POSTS.map(p => `<button class="th ${inCart('c' + p.id) ? 'sel' : ''}" data-cov="${p.id}" aria-label="${esc(p.title)}">${ph(IMG(p.id, p.cover || 1, '265,175'), p.title, col(p.area))}<span class="ck">${inCart('c' + p.id) ? '✓' : '+'}</span></button>`).join('')}</div>
+  <div class="thumbs">${POSTS.map(p => `<button class="th" data-cov="${p.id}" aria-label="Scarica la copertina: ${esc(p.title)}">${ph(IMG(p.id, p.cover || 1, '265,175'), p.title, col(p.area))}<span class="ck">${ico.dl}</span></button>`).join('')}</div>
   </div></section>`;
 }
 
-/* ---------- carrello ---------- */
-const pkey = (post, n) => `f${post}-${n}`;
-const inCart = k => st.cart.some(c => c.k === k);
-function bump() { const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }
-function toggle(item) { const i = st.cart.findIndex(c => c.k === item.k); if (i >= 0) st.cart.splice(i, 1); else { st.cart.push(item); bump(); toast('Aggiunto alla selezione', true); } updCart(); }
-/* opened = il drawer si apre subito: in quel caso il toast non offre "Vedi" */
-function addMany(items, opened = false) { let n = 0; items.forEach(it => { if (!inCart(it.k)) { st.cart.push(it); n++; } }); updCart(); if (n) bump(); toast(n ? `${n} file aggiunti alla selezione` : 'Già tutto nella selezione', !!n && !opened); }
+/* ---------- download (simulato): serve l'accesso giornalisti, poi parte subito ---------- */
 const albumOfPhoto = (post, n) => ALB.find(a => a.post === post && photoNums(a).includes(n));
-const photo = (post, n) => { const a = albumOfPhoto(post, n); return { k: pkey(post, n), t: a ? `${albumName(a)} · ${photoNums(a).indexOf(n) + 1}` : 'Foto ' + n, src: IMG(post, n, '265,175'), kind: 'Foto', area: postById(post)?.area }; };
+const photo = (post, n) => { const a = albumOfPhoto(post, n); return { t: a ? `${albumName(a)} · ${photoNums(a).indexOf(n) + 1}` : 'Foto ' + n, kind: 'Foto' }; };
 const albumItems = a => photoNums(a).map(n => photo(a.post, n));
-const docItem = i => ({ k: 'd' + i, t: DOCS[i].title, kind: DOCS[i].ext, z: DOCS[i].size });
-function updCart() {
-  save();
-  const cn = $('#cartN'); cn.textContent = st.cart.length; cn.hidden = !st.cart.length;
-  $('#cartBtn').setAttribute('aria-label', st.cart.length ? `La mia selezione, ${st.cart.length} file` : 'La mia selezione, vuota');
-  const f = st.cart.filter(c => c.kind === 'Foto').length, d = st.cart.length - f;
-  $('#cartList').innerHTML = st.cart.length ? st.cart.slice(-60).reverse().map(c => `<div class="ci">${c.src ? ph(c.src, c.t, col(c.area || 'Moto')) : `<span class="ext">${esc(c.kind)}</span>`}<div><b>${esc(c.t)}</b><small>${esc(c.kind)}${c.z ? ' · ' + esc(c.z) : ''}</small></div><button data-rm="${c.k}">Rimuovi</button></div>`).join('') + (st.cart.length > 60 ? `<p style="color:var(--mute);font-size:13px">…e altri ${st.cart.length - 60} file</p>` : '') : `<div class="empty" style="margin-top:12px">La selezione è vuota.<br>Aggiungi foto, album o documenti da qualsiasi comunicato: li scarichi tutti insieme in un unico zip.</div>`;
-  $('#cartFoot').innerHTML = st.cart.length ? `<div style="font-size:14px;color:var(--mute)">${f} foto · ${d} ${d === 1 ? 'documento' : 'documenti'}${st.logged ? ' · alta risoluzione' : ''}</div><button class="btn r" data-act="zip">${ico.dl}Scarica zip</button><button class="btn g" data-act="empty">Svuota</button>` : '';
+const docItem = i => ({ t: DOCS[i].title, kind: DOCS[i].ext });
+function download(items, name) {
+  if (!items.length) return;
+  if (!st.logged) { loginModal({ items, name }); return; }
+  dlReady(items, name);
 }
-function openDrawer() { $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); }
-function closeAll() { ['#drawer', '#mnav', '#scrim', '#modal'].forEach(s => $(s).classList.remove('on')); $('#burger').setAttribute('aria-expanded', 'false'); }
+function dlReady(items, name) {
+  if (items.length === 1) { toast(`Download avviato: ${items[0].t}${items[0].kind === 'Foto' ? ' (alta risoluzione)' : ''}`); return; }
+  const f = items.filter(c => c.kind === 'Foto').length, d = items.length - f;
+  modal(`<h2>Il tuo zip è pronto</h2><p><b>${esc(name)}</b><br>${[f ? `${f} foto in alta risoluzione` : '', d ? `${d} ${d === 1 ? 'documento' : 'documenti'}` : ''].filter(Boolean).join(' · ')}</p><p style="font-size:14px">Demo: nella versione reale qui parte il download, e l'ufficio stampa vede nelle statistiche Lulop quali file sono stati scaricati e da quale testata.</p><button class="btn b" data-close>Ok</button>`);
+}
+const kitItems = id => [...albumsOf(id).flatMap(albumItems), ...docsOf(id).map(d => docItem(DOCS.indexOf(d)))];
+function closeAll() { ['#mnav', '#scrim', '#modal'].forEach(s => $(s).classList.remove('on')); $('#burger').setAttribute('aria-expanded', 'false'); }
 
 /* ---------- modali ---------- */
 function modal(html) { $('#mcard').innerHTML = `<button class="x" data-close aria-label="Chiudi">×</button>` + html; $('#modal').classList.add('on'); $('#scrim').classList.add('on'); }
@@ -424,12 +419,11 @@ function nlModal(step) {
   <label class="consent"><input type="checkbox"> Acconsento alla misurazione di aperture e clic per migliorare il servizio (facoltativo).</label>
   <button class="btn b" style="width:100%;justify-content:center" data-act="nl2">Continua</button>`);
 }
-function zipReady() { modal(`<h2>Il tuo zip è pronto</h2><p>${st.cart.length} file in alta risoluzione.</p><p style="font-size:14px">Demo: nella versione reale qui parte il download, e l'ufficio stampa vede nelle statistiche Lulop quali file sono stati scaricati e da quale testata.</p><button class="btn b" data-close>Ok</button>`); }
 function setLoginLabel() { $('#loginLbl').textContent = st.logged ? 'Redazione' : 'Area giornalisti'; }
-let tt; function toast(m, view = false) {
+let tt; function toast(m) {
   const t = $('#toast');
-  t.innerHTML = esc(m) + (view ? ' · <button type="button" class="tlink" data-act="viewsel">Vedi</button>' : '');
-  t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), view ? 4000 : 2800);
+  t.textContent = m;
+  t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 3200);
 }
 
 /* ---------- router ---------- */
@@ -492,29 +486,25 @@ document.addEventListener('click', e => {
   if (t.dataset.mf) { st.mf = t.dataset.mf; st.album = null; rerenderKit(); return; }
   if (t.dataset.tab) { st.tab = t.dataset.tab; rerenderKit(); return; }
   if (t.dataset.album) { st.album = st.album === t.dataset.album ? null : t.dataset.album; st.shown = 24; rerenderKit(); setTimeout(() => $('#viewer')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); return; }
-  if (t.dataset.ph) { const k = pkey(t.dataset.pp, t.dataset.ph); toggle(photo(+t.dataset.pp, +t.dataset.ph)); const s = inCart(k); t.classList.toggle('sel', s); t.setAttribute('aria-pressed', s); t.querySelector('.ck').textContent = s ? '✓' : '+'; return; }
-  if (t.dataset.cov) { const p = postById(t.dataset.cov); toggle({ k: 'c' + p.id, t: p.title, src: IMG(p.id, p.cover || 1, '265,175'), kind: 'Foto', area: p.area }); const s = inCart('c' + p.id); t.classList.toggle('sel', s); t.querySelector('.ck').textContent = s ? '✓' : '+'; return; }
-  if (t.dataset.doc) { toggle(docItem(+t.dataset.doc)); rerenderKit(); return; }
-  if (t.dataset.rm) { st.cart = st.cart.filter(c => c.k !== t.dataset.rm); updCart(); rerenderKit(); return; }
+  if (t.dataset.ph) { download([photo(+t.dataset.pp, +t.dataset.ph)]); return; }
+  if (t.dataset.cov) { const p = postById(t.dataset.cov); download([{ t: 'Copertina – ' + p.title, kind: 'Foto' }]); return; }
+  if (t.dataset.doc) { download([docItem(+t.dataset.doc)]); return; }
   const a = t.dataset.act; if (!a) return; e.preventDefault();
   const A = ALB.find(x => x.id === st.album);
   ({
-    addkit: () => { const id = +t.dataset.post; addMany([...albumsOf(id).flatMap(albumItems), ...DOCS.map((d, i) => [d, i]).filter(([d]) => d.post === id).map(([, i]) => docItem(i))], true); openDrawer(); },
-    addbasic: () => { const p = postById(t.dataset.post); addMany([{ k: 'c' + p.id, t: p.title, src: IMG(p.id, p.cover || 1, '265,175'), kind: 'Foto', area: p.area }, { k: 't' + p.id, t: 'Testo – ' + p.title, kind: 'TXT' }], true); openDrawer(); },
+    addkit: () => { const p = postById(t.dataset.post); download(kitItems(p.id), 'Press kit – ' + p.title); },
+    addbasic: () => { const p = postById(t.dataset.post); download([{ t: 'Copertina – ' + p.title, kind: 'Foto' }, { t: 'Testo – ' + p.title, kind: 'TXT' }], 'Foto e testo – ' + p.title); },
     tokit: () => document.getElementById('kit')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-    addalbum: () => { addMany(albumItems(A)); rerenderKit(); },
-    addmodel: () => { const m = t.dataset.m; addMany([...ALB.filter(x => x.model === m).flatMap(albumItems), ...DOCS.map((d, i) => [d, i]).filter(([d]) => d.model === m).map(([, i]) => docItem(i))], true); openDrawer(); },
+    dlalbum: () => download(albumItems(A), albumName(A)),
+    addmodel: () => { const m = t.dataset.m; download([...ALB.filter(x => x.model === m).flatMap(albumItems), ...DOCS.map((d, i) => [d, i]).filter(([d]) => d.model === m).map(([, i]) => docItem(i))], 'Tutti i media – ' + m); },
     closealbum: () => { st.album = null; rerenderKit(); },
     more: () => { st.shown += 24; rerenderKit(); },
     reset: () => { Object.assign(st, { q: '', area: 'Tutte', type: 'Tutti', lang: 'Tutte', per: 'Tutto' }); route(); },
     video: () => toast('Anteprima video: nella versione reale si apre il player'),
     copy: async () => { try { await navigator.clipboard.writeText(textOf(postById(st.curPost))); toast('Testo copiato negli appunti'); } catch (_) { toast('Copia non consentita in questa anteprima'); } },
     share: async () => { const p = postById(st.curPost); const url = `https://press.suzuki.it/${slug(p.area)}/${p.id}`; try { await navigator.clipboard.writeText(url); toast('Link copiato: ' + url.replace('https://', '')); } catch (_) { toast('Link: ' + url.replace('https://', '')); } },
-    zip: () => { if (!st.logged) { closeAll(); loginModal('zip'); return; } closeAll(); zipReady(); },
-    empty: () => { st.cart = []; updCart(); rerenderKit(); },
-    dologin: () => { st.logged = true; setLoginLabel(); closeAll(); updCart(); if (st.after === 'zip') zipReady(); else toast('Accesso effettuato: alta risoluzione sbloccata'); st.after = null; },
+    dologin: () => { st.logged = true; save(); setLoginLabel(); closeAll(); const w = st.after; st.after = null; if (w) dlReady(w.items, w.name); else toast('Accesso effettuato: alta risoluzione sbloccata'); },
     newsletter: () => { closeAll(); nlModal(1); },
-    viewsel: () => { $('#toast').classList.remove('on'); openDrawer(); },
     login: () => { closeAll(); if (st.logged) toast('Sei già nell\'area giornalisti'); else loginModal(); },
     nl2: () => nlModal(2),
     addtestata: () => { t.insertAdjacentHTML('beforebegin', '<div class="field">Altra testata<input></div>'); },
@@ -523,7 +513,6 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; const open = document.querySelector('nav.main .open'); if (open) { closeMegas(); open.firstChild.focus(); } closeAll(); });
 $('#scrim').addEventListener('click', closeAll);
-$('#cartBtn').addEventListener('click', openDrawer);
 $('#loginBtn').addEventListener('click', () => { if (st.logged) { toast('Sei già nell\'area giornalisti'); return; } loginModal(); });
 $('#burger').addEventListener('click', () => { $('#mnav').classList.add('on'); $('#scrim').classList.add('on'); $('#burger').setAttribute('aria-expanded', 'true'); $('#mnav .x')?.focus(); });
 $('#srchBtn').addEventListener('click', () => { if (location.hash && location.hash !== '#home') { location.hash = 'home'; setTimeout(() => $('#q')?.focus(), 60); } else { $('#cerca')?.scrollIntoView({ behavior: 'smooth' }); $('#q')?.focus(); } });
@@ -531,5 +520,5 @@ function fades() { document.querySelectorAll('.cg').forEach(c => { c.classList.t
 document.addEventListener('scroll', e => { if (e.target.classList?.contains('cg')) fades(); }, true);
 window.addEventListener('resize', fades);
 window.addEventListener('hashchange', route);
-renderNav(); setLoginLabel(); updCart(); route();
+renderNav(); setLoginLabel(); route();
 })();

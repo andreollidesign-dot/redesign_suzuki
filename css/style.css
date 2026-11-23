@@ -154,9 +154,7 @@ aside .mlink small{color:var(--mute)}
 .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .th{position:relative;border-radius:8px;overflow:hidden;border:2px solid transparent;padding:0;background:none}
 .th .ph{aspect-ratio:3/2}
-.th.sel{border-color:var(--blue2)}
 .th .ck{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--blue2)}
-.th.sel .ck{background:var(--blue2);color:#fff;border-color:var(--blue2)}
 .more{margin-top:14px;text-align:center}
 .docs{display:grid;gap:10px}
 .doc{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
@@ -183,18 +181,10 @@ aside .mlink small{color:var(--mute)}
 /* drawer + modal */
 .scrim{position:fixed;inset:0;background:rgba(13,21,38,.45);z-index:40;display:none}
 .scrim.on{display:block}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:#fff;z-index:50;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
-.drawer.on{transform:none}
 .dh{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
 .dh h2{font-size:22px}
 .x{border:0;background:var(--soft);width:40px;height:40px;border-radius:50%;font-size:20px}
 .db{flex:1;overflow:auto;padding:12px 20px}
-.ci{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.ci .ph{width:72px;aspect-ratio:3/2;border-radius:6px;flex:none}
-.ci .ext{width:72px;height:48px}
-.ci div{flex:1;font-size:14px}
-.ci small{color:var(--mute);display:block}
-.ci button{border:0;background:none;color:var(--mute);font-size:13px;text-decoration:underline}
 .df{padding:16px 20px;border-top:1px solid var(--line);display:grid;gap:10px}
 .df .btn{justify-content:center}
 .modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
@@ -230,7 +220,6 @@ aside .mlink small{color:var(--mute)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* aggiunte refactor */
-.ci .ext{width:72px;height:48px;border-radius:6px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--mute);flex:none}
 .mname.nw{white-space:nowrap}
 .sbox .clear{cursor:pointer}
 .tools{margin-left:auto}
@@ -254,7 +243,6 @@ aside .mlink small{color:var(--mute)}
 }
 /* il carrello chiuso fuori schermo non deve allargare il viewport su mobile */
 html{overflow-x:clip}
-.drawer:not(.on),.mnav:not(.on){visibility:hidden;transition:transform .25s,visibility 0s .25s}
 
 /* correzioni demo 20/11 */
 .tokit{display:inline-flex;align-items:center;min-height:44px;padding:0 6px;font-weight:600;font-size:15px;color:var(--blue2);text-decoration:none}
@@ -346,12 +334,9 @@ details.full[open] .prev{display:none}
 .mnone{grid-column:1/-1;color:var(--mute);margin:0;font-size:14.5px}
 
 /* ===== header: "La mia selezione", menu mobile da destra ===== */
-.sel-s{display:none}
-#cartBtn.bump{animation:bump .4s ease}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
 .mnav{inset:0 0 0 auto;transform:translateX(100%)}
 .mnav.on{transform:none}
-.toast .tlink{background:none;border:0;color:#fff;font-weight:700;text-decoration:underline;padding:6px 4px;font-size:inherit}
 
 /* ===== pagine gamma ===== */
 .ghead{background:var(--soft);border-bottom:1px solid var(--line)}
@@ -375,7 +360,7 @@ a.gcard:hover{box-shadow:0 12px 28px rgba(13,21,38,.12);transform:translateY(-2p
 
 @media(max-width:1020px){.hgrid-in{grid-template-columns:1fr}.hsmall{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){
-  .sel-l{display:none}.sel-s{display:inline}
+
   #loginBtn{display:none}
   .hc .slide{min-height:78vh;min-height:78svh;align-items:flex-end}
   .hc .shade{background:linear-gradient(0deg,rgba(5,12,32,var(--am,.9)) 0%,rgba(5,12,32,0) 60%)}
@@ -400,7 +385,7 @@ a.gcard:hover{box-shadow:0 12px 28px rgba(13,21,38,.12);transform:translateY(-2p
   .gb{padding:10px 10px 12px}
   .gb b{font-size:15.5px}
 }
-@media(prefers-reduced-motion:reduce){#cartBtn.bump{animation:none}.hc.playing .hdot[aria-current=true] .bar i{animation:none}}
+@media(prefers-reduced-motion:reduce){.hc.playing .hdot[aria-current=true] .bar i{animation:none}}
 .hero .hnav-in{padding-block:0;display:flex;gap:16px}
 /* contrasto: occhiello e numeri quasi bianchi; indicatori su una pillola scura */
 .hcol .kick{color:#fff;justify-self:start}
@@ -471,3 +456,8 @@ a.chip{display:inline-flex;align-items:center;text-decoration:none;white-space:n
 /* comunicato: "Vai al press kit" solo sotto i 900 px, come link piccolo sotto i pulsanti */
 @media(min-width:900px){.tokit{display:none}}
 @media(max-width:899px){.tokit{flex-basis:100%;justify-content:flex-start;min-height:32px;padding:0;font-size:14px;font-weight:500;text-decoration:underline;text-underline-offset:3px}}
+
+/* download diretto: icona sulle miniature */
+.th .ck svg{width:15px;height:15px}
+.th:hover .ck,.th:focus-visible .ck{background:var(--blue2);color:#fff;border-color:var(--blue2)}
+.doc .ib svg{width:16px;height:16px}
